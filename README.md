@@ -23,12 +23,19 @@ Built with ASP.NET Core, Entity Framework Core, and SQL Server. API documentatio
 | PUT | `/api/VideoGameCharacter/{id}` | Updates an existing character |
 | DELETE | `/api/VideoGameCharacter/{id}` | Deletes a character |
 
-## Setup
-
-### Requirements
-- .NET 10
+## Requirements
+- .NET 10 SDK
 - SQL Server
-- Entity Framework Core Tools
+- EF Core Tools
+
+### NuGet Packages
+| Package | Version |
+|---------|---------|
+| Microsoft.AspNetCore.OpenApi | 10.0.9 |
+| Microsoft.EntityFrameworkCore | 10.0.9 |
+| Microsoft.EntityFrameworkCore.SqlServer | 10.0.9 |
+| Microsoft.EntityFrameworkCore.Tools | 10.0.9 |
+| Scalar.AspNetCore | 2.16.4 |
 
 ### Running the project
 1. Clone the repository
