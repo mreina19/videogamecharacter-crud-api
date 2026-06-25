@@ -7,17 +7,14 @@ namespace VideoGameCharacter.Services
 {
     public class VideoGameCharacterService(AppDbContext context) : IVideoGameCharacterService
     {
-        /*  Old Constructor way (pre C# 12)
-            public readonly AppDbContext _context;
-            public VideoGameCharacterService(AppDbContext options)
-            {
-                _context = context;
-            }
-        */
-
         //Adds a new character to the database with the provided DTO information, stores it on the database and returns it as a CharacterResponse.
         public async Task<CharacterResponse> AddCharacterAsync(CreateCharacterRequest character)
         {
+            //Checks if a character with the same Name and Game already exists in the database.
+            //If so, the insert is rejected and an exception is thrown.
+            if (await context.Characters.AnyAsync(c => c.Name.ToLower() == character.Name.ToLower() && c.Game.ToLower() == character.Game.ToLower()))
+                throw new InvalidOperationException("A character with the same Name and Game already exists.");
+
             //Maps the incoming DTO to the Character model (entity)
             var newCharacter = new Character
             {
@@ -89,6 +86,10 @@ namespace VideoGameCharacter.Services
         //Finds a character by Id, updates its fields with the incoming DTO data, and saves the changes.
         public async Task<bool> UpdateCharacterAsync(int id, UpdateCharacterRequest character)
         {
+            //Checks if a character with the same Name and Game (with a different Id) already exists in the database.
+            //If so, the update is rejected and an exception is thrown.
+            if (await context.Characters.AnyAsync(c => c.Name.ToLower() == character.Name.ToLower() && c.Game.ToLower() == character.Game.ToLower() && c.Id != id))
+                throw new InvalidOperationException("A character with the same Name and Game already exists.");
 
             var characterToUpdate = await context.Characters.FindAsync(id);
 
