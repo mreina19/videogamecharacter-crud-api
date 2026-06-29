@@ -15,14 +15,7 @@ namespace VideoGameCharacter.Controllers
             {
                 var characters = await service.GetAllCharactersAsync();
 
-                //No characters found in the database: log a warning and return 404.
-                if(characters is null)
-                {
-                    logger.LogWarning($"{nameof(GetCharacters)}: There are no characters on the database.");
-                    return NotFound("There are no characters on the database.");
-                }
-
-                //Characters retrieved successfully: log and return 200 with the list.
+                //Characters retrieved successfully: log and return 200 with the list (may be empty).
                 logger.LogInformation($"{nameof(GetCharacters)}: All characters information retrieved successfully from the database.");
                 return Ok(characters);
             }
@@ -67,7 +60,7 @@ namespace VideoGameCharacter.Controllers
             {
                 var createdCharacter = await service.AddCharacterAsync(character);
 
-                //Character added successfuly: log and returns 200 with a Location header.
+                //Character added successfuly: log and returns 201 with a Location header.
                 logger.LogInformation($"{nameof(AddCharacter)}: New character added successfully on the database- {character.Name}, {character.Game}.");
                 return CreatedAtAction(nameof(GetCharacter), new { id = createdCharacter.Id}, createdCharacter);
             }
