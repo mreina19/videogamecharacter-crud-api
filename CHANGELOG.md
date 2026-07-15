@@ -1,3 +1,9 @@
+## v1.1.0 Partial Updates (PATCH) (15th July 2026)
+
+- Added PATCH endpoints for characters and users, allowing partial updates
+- PUT and PATCH now use separate DTOs: PUT requires every field (full replace), PATCH accepts only the fields being changed
+- Duplicate validation on PATCH endpoints for fields not included in the request
+
 ## v1.0.0 Video Game Character API with JWT Authentication (15th July 2026)
 
 - Project scaffolding
