@@ -1,0 +1,120 @@
+### Login as admin
+### Note: the first admin user must be set manually in the database
+POST http://localhost:5113/api/Auth/login
+Content-Type: application/json
+
+{
+  "email": "alice.anderson@example.com",
+  "password": "Alice@1234"
+}
+
+###
+
+### Login as non-admin
+POST http://localhost:5113/api/Auth/login
+Content-Type: application/json
+
+{
+  "email": "ben.carter@example.com",
+  "password": "Ben@1234"
+}
+
+###
+
+### Verify token
+GET http://localhost:5113/api/Auth/verify-token
+Authorization: Bearer {{token}}
+
+###
+
+### Create a new user (admin only)
+POST http://localhost:5113/api/Auth/register
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "firstName": "Fernando",
+  "lastName": "Alberto",
+  "email": "fernando.alberto@company.com",
+  "password": "Fernando@1234",
+  "isActive": true,
+  "role": "Normal"
+}
+
+###
+
+### Get all users (admin only)
+GET http://localhost:5113/api/Auth/users
+Authorization: Bearer {{token}}
+
+###
+
+### Get user by Id (admin only)
+GET http://localhost:5113/api/Auth/users/1
+Authorization: Bearer {{token}}
+
+###
+
+### Update a user (admin only)
+PUT http://localhost:5113/api/Auth/users/1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "firstName": "James",
+  "lastName": "Carter",
+  "email": "james.carter@company.com",
+  "password": "James@1234",
+  "isActive": true,
+  "role": "Normal"
+}
+
+###
+
+### Delete a user (admin only)
+DELETE http://localhost:5113/api/Auth/users/1
+Authorization: Bearer {{token}}
+
+###
+
+### Get all characters (requires login)
+GET http://localhost:5113/api/VideoGameCharacter
+Authorization: Bearer {{token}}
+
+###
+
+### Get character by Id (requires login)
+GET http://localhost:5113/api/VideoGameCharacter/1
+Authorization: Bearer {{token}}
+
+###
+
+### Add a character (admin only)
+POST http://localhost:5113/api/VideoGameCharacter
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Cloud Strife",
+  "game": "Final Fantasy VII",
+  "role": "Hero"
+}
+
+###
+
+### Update a character (admin only)
+PUT http://localhost:5113/api/VideoGameCharacter/1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Cloud Strife",
+  "game": "Final Fantasy VII Remake",
+  "role": "Hero"
+}
+
+###
+
+### Delete a character (admin only)
+DELETE http://localhost:5113/api/VideoGameCharacter/1
+Authorization: Bearer {{token}}
