@@ -139,7 +139,7 @@ namespace VideoGameCharacter.Services
             return result;
         }
 
-        //Updates a user's information by Id in the table with the provided information.
+        //Fully updates a user's information by Id in the table with the provided information.
         public async Task<bool> UpdateUserAsync(int id, UpdateUserRequest request)
         {
             //Checks if there is a user with the specified Id in the table.
@@ -163,6 +163,41 @@ namespace VideoGameCharacter.Services
             userToUpdate.PasswordHash = new PasswordHasher<User>().HashPassword(userToUpdate, request.Password);
 
             //Saves the changes to the database. Generates and executes the UPDATE SQL.
+            await context.SaveChangesAsync();
+
+            return true;
+        }
+
+        //Finds a user by Id and updates only the fields included in the request, leaving anything omitted unchanged.
+        public async Task<bool> PatchUserAsync(int id, PatchUserRequest request)
+        {
+            var userToUpdate = await context.Users.FindAsync(id);
+
+            if (userToUpdate is null)
+                return false;
+
+            if (request.Email is not null && await context.Users.AnyAsync(u => u.Email.ToLower() == request.Email.ToLower() && u.Id != id))
+                throw new InvalidOperationException($"A user with email '{request.Email}' already exists.");
+
+            if (request.FirstName is not null)
+                userToUpdate.FirstName = request.FirstName;
+
+            if (request.LastName is not null)
+                userToUpdate.LastName = request.LastName;
+
+            if (request.Email is not null)
+                userToUpdate.Email = request.Email;
+
+            if (request.IsActive is not null)
+                userToUpdate.IsActive = request.IsActive.Value;
+
+            //.Value unwraps the nullable UserRoles? into a plain UserRoles, since ToString() on the nullable type directly triggers a possible-null warning even though the null check above guarantees it's safe
+            if (request.Role is not null)
+                userToUpdate.Role = request.Role.Value.ToString(); 
+
+            if (request.Password is not null)
+                userToUpdate.PasswordHash = new PasswordHasher<User>().HashPassword(userToUpdate, request.Password);
+
             await context.SaveChangesAsync();
 
             return true;

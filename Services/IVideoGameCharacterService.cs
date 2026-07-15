@@ -8,6 +8,7 @@ namespace VideoGameCharacter.Services
         Task<CharacterResponse?> GetCharacterByIdAsync(int id);
         Task<CharacterResponse> AddCharacterAsync(CreateCharacterRequest character);
         Task<bool> UpdateCharacterAsync(int id, UpdateCharacterRequest character);
+        Task<bool> PatchCharacterAsync(int id, PatchCharacterRequest character);
         Task<bool> DeleteCharacterAsync(int id);
     }
 }

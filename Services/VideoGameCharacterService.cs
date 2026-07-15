@@ -104,5 +104,34 @@ namespace VideoGameCharacter.Services
 
             return true;
         }
+
+        //Finds a character by Id and updates only the fields included in the request, leaving anything omitted unchanged.
+        public async Task<bool> PatchCharacterAsync(int id, PatchCharacterRequest character)
+        {
+            var characterToUpdate = await context.Characters.FindAsync(id);
+
+            if (characterToUpdate is null)
+                return false;
+
+            var effectiveName = character.Name ?? characterToUpdate.Name;
+            var effectiveGame = character.Game ?? characterToUpdate.Game;
+
+            if (await context.Characters.AnyAsync(c => c.Name.ToLower() == effectiveName.ToLower() && c.Game.ToLower() == effectiveGame.ToLower() && c.Id != id))
+                throw new InvalidOperationException("A character with the same Name and Game already exists.");
+
+            if (character.Name is not null)
+                characterToUpdate.Name = character.Name;
+
+            if (character.Game is not null)
+                characterToUpdate.Game = character.Game;
+
+            //.Value unwraps the nullable CharacterRoles? into a plain CharacterRoles, since ToString() on the nullable type directly triggers a possible-null warning even though the null check above guarantees it's safe
+            if (character.Role is not null)
+                characterToUpdate.Role = character.Role.Value.ToString(); 
+
+            await context.SaveChangesAsync();
+
+            return true;
+        }
     }
 }
