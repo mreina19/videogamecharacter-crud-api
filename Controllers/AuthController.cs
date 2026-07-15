@@ -114,6 +114,37 @@ namespace VideoGameCharacter.Controllers
             }
         }
 
+        [HttpPatch("users/{id}")]       //Maps to PATCH /api/Auth/users/{id}
+        [Authorize(Roles = "Admin")]    //Restricts access to this endpoint to users with the "Admin" role.
+        public async Task<IActionResult> PatchUser(int id, PatchUserRequest request)
+        {
+            try
+            {
+                //User not found: log a warning and return 404.
+                if (!await service.PatchUserAsync(id, request))
+                {
+                    logger.LogWarning($"{nameof(PatchUser)}: User '{id}' not found.");
+                    return NotFound($"User '{id}' not found.");
+                }
+
+                //User updated successfully: log and return 204 No Content.
+                logger.LogInformation($"{nameof(PatchUser)}: User '{id}' partially updated successfully.");
+                return NoContent();
+            }
+            catch (InvalidOperationException e)
+            {
+                //Email already exists: log and return 409
+                logger.LogWarning($"{nameof(PatchUser)}: {e.Message}");
+                return Conflict(e.Message);
+            }
+            catch (Exception e)
+            {
+                //Unexpected error: log and return 500
+                logger.LogError($"{nameof(PatchUser)}: {e.Message}.");
+                return StatusCode(500, e.Message);
+            }
+        }
+
         [HttpDelete("users/{id}")]          //Maps to DELETE /api/Auth/users/{id}
         [Authorize(Roles = "Admin")]        //Restricts access to users with the "Admin" role.
         public async Task<IActionResult> DeleteUser(int id)

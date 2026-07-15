@@ -89,7 +89,7 @@ namespace VideoGameCharacter.Controllers
         {
             try
             {
-                //Character not found in the database: log a warning and return 404.
+                //Character not found: log a warning and return 404.
                 if(!await service.UpdateCharacterAsync(id, character))
                 {
                     logger.LogWarning($"{nameof(UpdateCharacter)}: There is no character '{id}' on the database.");
@@ -114,16 +114,45 @@ namespace VideoGameCharacter.Controllers
             }
         }
 
+        [HttpPatch("{id}")]             //Maps to PATCH /api/VideoGameCharacter/{id}
+        [Authorize(Roles = "Admin")]    //Restricts access to this endpoint to users with the "Admin" role.
+        public async Task<ActionResult> PatchCharacter(int id, PatchCharacterRequest character)
+        {
+            try
+            {
+                //Character not found: log a warning and return 404.
+                if (!await service.PatchCharacterAsync(id, character))
+                {
+                    logger.LogWarning($"{nameof(PatchCharacter)}: There is no character '{id}' on the database.");
+                    return NotFound($"There is no character '{id}' on the database.");
+                }
+
+                //Character updated successfully: log and return 204.
+                logger.LogInformation($"{nameof(PatchCharacter)}: Character '{id}' partially updated successfully in the database.");
+                return NoContent();
+            }
+            catch (InvalidOperationException e)
+            {
+                //Duplicate character: log and return 409
+                logger.LogWarning($"{nameof(PatchCharacter)}: {e.Message}");
+                return Conflict(e.Message);
+            }
+            catch (Exception e)
+            {
+                //Unexpected error: log and return 500
+                logger.LogError($"{nameof(PatchCharacter)}: {e.Message}.");
+                return StatusCode(500, e.Message);
+            }
+        }
+
         [HttpDelete("{id}")]               //Maps to  DELETE /api/VideoGameCharacter/{id}
         [Authorize(Roles = "Admin")]       //Restricts access to this endpoint to users with the "Admin" role.
         public async Task<ActionResult> DeleteCharacter(int id)
         {
             try
             {
-                var deleted = await service.DeleteCharacterAsync(id);
-
                 //Character not found in the database: log a warning and return 404.
-                if(!deleted)
+                if(!await service.DeleteCharacterAsync(id))
                 {
                     logger.LogWarning($"{nameof(DeleteCharacter)}: There is no character '{id}' on the database.");
                     return NotFound($"There is no character '{id}' on the database.");

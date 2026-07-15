@@ -9,6 +9,7 @@ namespace VideoGameCharacter.Services
         Task<List<UserResponse>> GetUsersAsync();
         Task<UserResponse?> GetUserByIdAsync(int id);
         Task<bool> UpdateUserAsync(int id, UpdateUserRequest request);
+        Task<bool> PatchUserAsync(int id, PatchUserRequest request);
         Task<bool> DeleteUserAsync(int id, int currentUserId);
     }
 }
