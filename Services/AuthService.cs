@@ -82,12 +82,15 @@ namespace VideoGameCharacter.Services
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration.GetValue<string>("AppSettings:Token")!));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
+            //Reads the token lifetime from configuration instead of hardcoding it.
+            var expiration = configuration.GetValue<int>("AppSettings:Expiration");
+
             //Assembles the token: who issued it, who it's for, what claims it carries, when it expires, and how it is signed.
             var tokenDescriptor = new JwtSecurityToken(
                 issuer: configuration.GetValue<string>("AppSettings:Issuer"),
                 audience: configuration.GetValue<string>("AppSettings:Audience"),
                 claims: claims,
-                expires: DateTime.UtcNow.AddDays(1),
+                expires: DateTime.UtcNow.AddMinutes(expiration),
                 signingCredentials: creds
             );
 
