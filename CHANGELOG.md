@@ -1,3 +1,7 @@
+## v1.2.0 Configurable Token Expiration (17th July 2026)
+
+- JWT expiration is now read from `AppSettings:Expiration` instead of being hardcoded
+
 ## v1.1.0 Partial Updates (PATCH) (15th July 2026)
 
 - Added PATCH endpoints for characters and users, allowing partial updates

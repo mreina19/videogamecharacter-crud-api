@@ -93,7 +93,8 @@ openssl rand -base64 64
 "AppSettings": {
   "Token": "your_generated_key_here",
   "Issuer": "VideoGameCharacterApi",
-  "Audience": "VideoGameCharacterApiUsers"
+  "Audience": "VideoGameCharacterApiUsers",
+  "Expiration": 30
 }
 ```
 4. Apply the migrations to create the database and tables:
@@ -131,6 +132,7 @@ http://localhost:5113/scalar/v1
 - `role` on a user must be one of: `Admin`, `Normal`.
 - `role` on a character must be one of: `Hero`, `Villain`, `Figurant`, `AntiHero`.
 - `FirstName` and `LastName` are limited to 50 characters, `Email` to 70 characters, `Password` to 72 characters.
+- Token lifetime is configurable via `AppSettings:Expiration` in `appsettings.json`. Once a token expires, the client must log in again to obtain a new one.
 - Users can be deactivated (`IsActive = false`) without being deleted, either through `PUT`/`PATCH /api/Auth/users/{id}` or directly in the database. Deactivated users cannot log in.
 - `PUT` requires every field and fully replaces the resource. `PATCH` accepts only the fields being changed; omitted fields are left unchanged.
 - On `PATCH`, duplicate validation (email, or character name/game) accounts for fields not included in the request by falling back to the resource's current values.
